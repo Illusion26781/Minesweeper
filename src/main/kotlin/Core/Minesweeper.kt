@@ -2,7 +2,7 @@ package Core
 
 import java.util.*
 
-class Minesweeper (xMax: Int, yMax: Int, private val maxBombs: Int)
+class Minesweeper (xMax: Int, yMax: Int, val maxBombs: Int)
 {
     //each cell has a number from -1 to 9, -1 meaning bomb, 9 meaning flag
     var nFlags = maxBombs
@@ -77,13 +77,17 @@ class Minesweeper (xMax: Int, yMax: Int, private val maxBombs: Int)
 
     fun hitAround(x: Int, y: Int)
     {
-        val cells = generator.generateAround(x,y)
-
+        val cells = generator.generateAround(x,y).filter{ board.insideBoard(it.x,it.y) }
+        if(cells.size == board.grid[x][y].value)
+            cells.forEach{
+                if(!board.grid[it.x][it.y].flag)
+                    flag(it.x,it.y)
+            }
+        else
         cells.forEach {
-            
             if(over)
                 return
-
+            
             hit(it.x,it.y)
         }
     }

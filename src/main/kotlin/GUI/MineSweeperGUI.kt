@@ -26,17 +26,19 @@ class MineSweeperGUI(var mine: Minesweeper)
     init
     {
         generateCells()
+        val xBound = 20 + 30*mine.board.xMax
+        val yBound = 20 + 30*mine.board.yMax
 
         //frame.contentPane.add(scrollPane, BorderLayout.CENTER)
         frame.layout = null
         frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-        frame.size = Dimension(600, 400)
+        frame.size = Dimension(xBound+120, yBound+50)
         frame.setLocationRelativeTo(null)
         frame.isVisible = true
 
         val newButton = JButton("New game")
         newButton.addActionListener {
-            mine = Minesweeper(10,10,10)
+            mine = Minesweeper(mine.board.xMax,mine.board.yMax,mine.maxBombs)
             updateBoard()
             timer.cancel()
             time = 0.seconds
@@ -46,11 +48,11 @@ class MineSweeperGUI(var mine: Minesweeper)
             flagsL.text = mine.nFlags.toString()
         }
         newButton.margin = Insets(0, 0, 0, 0)
-        newButton.setBounds(400, 30, 70, 30)
+        newButton.setBounds(xBound, 30, 70, 30)
         frame.add(newButton)
         
-        timeL.setBounds(400, 70, 150, 30)
-        flagsL.setBounds(400, 120, 150, 30)
+        timeL.setBounds(xBound, 70, 150, 30)
+        flagsL.setBounds(xBound, 120, 150, 30)
         
         frame.add(timeL)
         frame.add(flagsL)
@@ -63,8 +65,8 @@ class MineSweeperGUI(var mine: Minesweeper)
         var b : JButton
         val xOffset = 10
         val yOffset = 10
-        for(x:Int in 0 until 10)
-            for(y:Int in 0 until 10)
+        for(x:Int in 0 until mine.board.xMax)
+            for(y:Int in 0 until mine.board.yMax)
             {
                 b = JButton() //creating instance of JButton
                 b.setBounds(xOffset+30*x, yOffset+30*y, 30, 30) //x axis, y axis, width, height
@@ -171,7 +173,6 @@ class MineSweeperGUI(var mine: Minesweeper)
                     buttons[nButton].background = null
                     buttons[nButton].foreground = Color.BLACK
                 }
-
                 nButton++
 
             }
