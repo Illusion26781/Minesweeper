@@ -31,6 +31,7 @@ class Minesweeper (xMax: Int, yMax: Int, val maxBombs: Int)
         val cell = board.grid[x][y]
         if(cell.flag)
             return
+
         if(cell.value == -1)
         {
             end()
@@ -55,8 +56,6 @@ class Minesweeper (xMax: Int, yMax: Int, val maxBombs: Int)
 
         if(board.grid[x][y].flag)
         {
-            //remove flag
-            //flags.remove(Core.Cell(x,y))
             nFlags++
             board.grid[x][y].flag = false
             return
@@ -83,13 +82,13 @@ class Minesweeper (xMax: Int, yMax: Int, val maxBombs: Int)
                 if(!board.grid[it.x][it.y].flag)
                     flag(it.x,it.y)
             }
-        else
-        cells.forEach {
-            if(over)
-                return
-            
-            hit(it.x,it.y)
-        }
+        else if(cells.count { board.grid[it.x][it.y].flag } == board.grid[x][y].value)
+            cells.forEach {
+                if(over)
+                    return
+
+                hit(it.x,it.y)
+            }
     }
 
     private fun generateBombs(x:Int,y: Int)

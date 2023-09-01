@@ -29,7 +29,7 @@ class MineSweeperGUI(var mine: Minesweeper)
         val xBound = 20 + 30*mine.board.xMax
         val yBound = 20 + 30*mine.board.yMax
 
-        //frame.contentPane.add(scrollPane, BorderLayout.CENTER)
+
         frame.layout = null
         frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
         frame.size = Dimension(xBound+120, yBound+50)
@@ -76,7 +76,6 @@ class MineSweeperGUI(var mine: Minesweeper)
                     if(!started )
                         timer.scheduleAtFixedRate(timerTask {
                             time+=1.seconds
-                            //println(time)
                             timeL.text = time.toString()
                             started=true
                         },0, 1000)
@@ -111,8 +110,7 @@ class MineSweeperGUI(var mine: Minesweeper)
             if (e?.button == MouseEvent.BUTTON3) {
                 mine.flag(x,y)
                 updateBoard()
-                flagsL.text = mine.nFlags.toString()
-    
+
             }
         }
 
@@ -128,6 +126,7 @@ class MineSweeperGUI(var mine: Minesweeper)
 
     private fun updateBoard()
     {
+        flagsL.text = mine.nFlags.toString()
         var nButton = 0
         if(mine.over)
         {
@@ -147,8 +146,6 @@ class MineSweeperGUI(var mine: Minesweeper)
                     buttons[nButton].text = "F"
                     buttons[nButton].foreground = Color.RED
                 }
-
-
                 else if(cell.found)
                 {
                     if(cell.value != -1)
