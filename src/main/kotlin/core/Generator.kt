@@ -1,4 +1,4 @@
-package Core
+package core
 
 class Generator(private val board: Board, private val maxBombs: Int) {
     fun generateBombs(x: Int, y: Int): ArrayList<Cell> {
@@ -26,8 +26,6 @@ class Generator(private val board: Board, private val maxBombs: Int) {
         val points = generateAround(x, y)
 
         points.forEach {
-            if (!board.insideBoard(it.x, it.y)) return@forEach
-
             if (board.grid[it.x][it.y].value == -1) result++
         }
 
@@ -40,7 +38,9 @@ class Generator(private val board: Board, private val maxBombs: Int) {
 
         for (xRel in -1..1)
             for (yRel in -1..1) {
-                if (xRel == 0 && yRel == 0) continue
+                if (xRel == 0 && yRel == 0 ||
+                    !board.insideBoard(x + xRel, y+yRel)
+                    ) continue
 
                 points.add(Point(x + xRel, y + yRel))
         }

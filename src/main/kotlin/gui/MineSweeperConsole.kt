@@ -1,6 +1,6 @@
-package GUI
+package gui
 
-import Core.Board
+import core.Board
 
 class MineSweeperConsole(private val board:Board)
 {

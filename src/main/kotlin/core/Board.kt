@@ -1,4 +1,4 @@
-package Core
+package core
 
 class Board(val xMax: Int, val yMax: Int)
 {

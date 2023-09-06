@@ -1,6 +1,6 @@
-package GUI
+package gui
 
-import Core.Minesweeper
+import core.Minesweeper
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Insets
@@ -8,23 +8,35 @@ import java.awt.Label
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import java.util.Timer
-import java.util.TimerTask
 import javax.swing.JButton
 import javax.swing.JFrame
 import kotlin.concurrent.timerTask
 import kotlin.time.Duration.Companion.seconds
 
-class MineSweeperGUI(var mine: Minesweeper)
+class MineSweeperGUI( mine: Minesweeper)
 {
+    var mine = mine
+        set(value) {
+            field = value
+            updateBoard()
+            timer.cancel()
+            time = 0.seconds
+            timer = Timer()
+            timeL.text = time.toString()
+            started = false
+            flagsL.text = mine.nFlags.toString()
+        }
+    lateinit var newGame: ()->Unit
     private val frame = JFrame("Hello, Kotlin/Swing")
     private val buttons = ArrayList<JButton>()
     private var time = 0.seconds
     private val timeL = Label(time.toString())
-    private val flagsL = Label(mine.nFlags.toString())
+    private val flagsL = Label("0")
     private var timer = Timer()
     private var started = false
     init
     {
+
         generateCells()
         val xBound = 20 + 30*mine.board.xMax
         val yBound = 20 + 30*mine.board.yMax
@@ -36,27 +48,22 @@ class MineSweeperGUI(var mine: Minesweeper)
         frame.setLocationRelativeTo(null)
         frame.isVisible = true
 
-        val newButton = JButton("New game")
-        newButton.addActionListener {
-            mine = Minesweeper(mine.board.xMax,mine.board.yMax,mine.maxBombs)
+
+        val newGameButton = JButton("New game")
+        newGameButton.addActionListener {
+            newGame()
             updateBoard()
-            timer.cancel()
-            time = 0.seconds
-            timer = Timer()
-            timeL.text = time.toString()
-            started = false
-            flagsL.text = mine.nFlags.toString()
         }
-        newButton.margin = Insets(0, 0, 0, 0)
-        newButton.setBounds(xBound, 30, 70, 30)
-        frame.add(newButton)
+        newGameButton.margin = Insets(0, 0, 0, 0)
+        newGameButton.setBounds(xBound, 30, 70, 30)
+        frame.add(newGameButton)
         
         timeL.setBounds(xBound, 70, 150, 30)
         flagsL.setBounds(xBound, 120, 150, 30)
         
         frame.add(timeL)
         frame.add(flagsL)
-        
+
         
     }
 
@@ -124,48 +131,44 @@ class MineSweeperGUI(var mine: Minesweeper)
 
     }
 
-    private fun updateBoard()
+    fun updateBoard()
     {
         flagsL.text = mine.nFlags.toString()
-        var nButton = 0
         if(mine.over)
         {
             timer.cancel()
             timeL.text = time.toString() + " " + if(mine.won) "Game Won!" else "Game Lost!"
         }
+        updateGrid()
+    }
+
+    private fun updateGrid() {
+        var nButton = 0
         repeat(mine.board.xMax)
-        {
-                x ->
+        { x ->
             repeat(mine.board.yMax)
-            {
-                y ->
+            { y ->
                 val cell = mine.board.grid[x][y]
 
-                if(cell.flag)
-                {
+                if (cell.flag) {
                     buttons[nButton].text = "F"
                     buttons[nButton].foreground = Color.RED
                 }
-                else if(cell.found)
-                {
-                    if(cell.value != -1)
-                    {
+                else if (cell.found) {
+                    if (cell.value != -1) {
                         buttons[nButton].text = cell.value.toString()
                         buttons[nButton].background = Color.LIGHT_GRAY
-                        if(cell.value==0)
+                        if (cell.value == 0)
                             buttons[nButton].background = Color.GRAY
 
                     }
-                    else
-                    {
+                    else {
                         buttons[nButton].text = "X"
                         buttons[nButton].background = Color.RED
 
                     }
                 }
-
-                else
-                {
+                else {
                     buttons[nButton].text = ""
                     buttons[nButton].background = null
                     buttons[nButton].foreground = Color.BLACK
@@ -174,6 +177,5 @@ class MineSweeperGUI(var mine: Minesweeper)
 
             }
         }
-
     }
 }
